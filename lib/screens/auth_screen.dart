@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:post_app/widgets/auth/auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -22,21 +21,14 @@ class _AuthScreenState extends State<AuthScreen> {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
       }
-    } on PlatformException catch (err) {
-      var message = 'An error occured, please check email/password';
-
-      if (err.message != null) {
-        message = err.message;
-      }
-
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Theme.of(ctx).errorColor,
-        ),
-      );
     } catch (err) {
-      print(err);
+      // setState(() {
+      Scaffold.of(ctx).showSnackBar(
+        SnackBar(
+            content: Text(err.message),
+            backgroundColor: Theme.of(context).errorColor),
+      );
+      // });
     }
   }
 

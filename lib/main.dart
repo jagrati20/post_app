@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:post_app/screens/auth_screen.dart';
-import 'package:post_app/screens/create_post_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:post_app/screens/home_screen.dart';
 
 // void main() => runApp(MyApp());
 void main() async {
@@ -19,10 +19,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.blue,
           backgroundColor: Colors.blue,
-          accentColor: Colors.deepPurple,
+          accentColor: Colors.blue,
           accentColorBrightness: Brightness.dark,
           buttonTheme: ButtonTheme.of(context).copyWith(
-              buttonColor: Colors.pink,
+              buttonColor: Colors.blue,
               textTheme: ButtonTextTheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, userSnapShot) {
           if (userSnapShot.hasData) {
-            return CreatePost();
+            return HomeScreen();
           }
           return AuthScreen();
         },
