@@ -5,6 +5,8 @@ class AuthForm extends StatefulWidget {
   final void Function(
     String email,
     String password,
+    String firstName,
+    String lastName,
     bool isLogin,
     BuildContext ctx,
   ) submitFn;
@@ -18,6 +20,8 @@ class _AuthFormState extends State<AuthForm> {
   var _isLogin = true;
   String _userEmail = '';
   String _userPassword = '';
+  String _userFirstName = '';
+  String _userLastName = '';
 
   void _trySubmit() {
     final isValid = _formKey.currentState.validate();
@@ -29,6 +33,8 @@ class _AuthFormState extends State<AuthForm> {
       widget.submitFn(
         _userEmail.trim(),
         _userPassword.trim(),
+        _userFirstName.trim(),
+        _userLastName.trim(),
         _isLogin,
         context,
       );
@@ -78,14 +84,51 @@ class _AuthFormState extends State<AuthForm> {
                       _userPassword = value;
                     },
                   ),
+                  if (!_isLogin)
+                    TextFormField(
+                      key: ValueKey('firstName'),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter First Name';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        labelText: 'First Name',
+                      ),
+                      onSaved: (value) {
+                        _userFirstName = value;
+                      },
+                    ),
+                  if (!_isLogin)
+                    TextFormField(
+                      key: ValueKey('lastName'),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter Last Name';
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        labelText: 'Last Name',
+                      ),
+                      onSaved: (value) {
+                        _userLastName = value;
+                      },
+                    ),
                   SizedBox(height: 12),
                   ElevatedButton(
                     child: Text(_isLogin ? 'Log in' : 'Sign up!'),
                     onPressed: _trySubmit,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.deepPurpleAccent,
+                    ),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
-                      primary: Colors.blue,
+                      primary: Colors.deepPurpleAccent,
                     ),
                     child: Text(_isLogin ? 'Sign up!' : 'Log in'),
                     onPressed: () {

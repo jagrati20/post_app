@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:post_app/widgets/auth/auth_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -10,8 +11,8 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final _auth = FirebaseAuth.instance;
 
-  void _submitAuthForm(
-      String email, String password, bool isLogin, BuildContext ctx) async {
+  void _submitAuthForm(String email, String password, String fname,
+      String lname, bool isLogin, BuildContext ctx) async {
     UserCredential authResult;
     try {
       if (isLogin) {
@@ -20,6 +21,14 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(authResult.user.uid)
+            .set({
+          'firstName': fname,
+          'lastName': lname,
+          'email': email,
+        });
       }
     } catch (err) {
       // setState(() {
@@ -35,7 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Colors.deepPurpleAccent,
       body: AuthForm(_submitAuthForm),
     );
   }

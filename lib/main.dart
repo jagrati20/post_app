@@ -17,12 +17,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Posts',
       theme: ThemeData(
-          primarySwatch: Colors.blue,
-          backgroundColor: Colors.blue,
-          accentColor: Colors.blue,
+          primarySwatch: Colors.deepPurple,
+          backgroundColor: Colors.deepPurpleAccent,
+          accentColor: Colors.deepPurple,
           accentColorBrightness: Brightness.dark,
           buttonTheme: ButtonTheme.of(context).copyWith(
-              buttonColor: Colors.blue,
+              buttonColor: Colors.deepPurple,
               textTheme: ButtonTextTheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
