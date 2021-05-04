@@ -76,89 +76,91 @@ class _CreatePostState extends State<CreatePost> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: new EdgeInsets.all(5.0),
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text(
-              'Create a new Post!',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const Divider(
-              thickness: 1,
-            ),
-            TextFormField(
-              key: ValueKey('title'),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter a title.';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                labelText: 'Post Title',
+    return SingleChildScrollView(
+      child: Container(
+        margin: new EdgeInsets.all(5.0),
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Text(
+                'Create a new Post!',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              onSaved: (value) {
-                _postTitle = value;
-              },
-            ),
-            TextFormField(
-              key: ValueKey('description'),
-              keyboardType: TextInputType.multiline,
-              maxLines: 3,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter a description';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                labelText: 'Description',
+              const Divider(
+                thickness: 1,
               ),
-              onSaved: (value) {
-                _postDescription = value;
-              },
-            ),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                if (!imageSelected)
-                  TextButton.icon(
-                    style: TextButton.styleFrom(
-                      primary: Colors.deepPurple,
+              TextFormField(
+                key: ValueKey('title'),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a title.';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  labelText: 'Post Title',
+                ),
+                onSaved: (value) {
+                  _postTitle = value;
+                },
+              ),
+              TextFormField(
+                key: ValueKey('description'),
+                keyboardType: TextInputType.multiline,
+                maxLines: 3,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                ),
+                onSaved: (value) {
+                  _postDescription = value;
+                },
+              ),
+              SizedBox(height: 12),
+              Row(
+                children: [
+                  if (!imageSelected)
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        primary: Colors.deepPurple,
+                      ),
+                      onPressed: _pickImage,
+                      icon: Icon(Icons.image),
+                      label: Text('Add Image'),
                     ),
-                    onPressed: _pickImage,
-                    icon: Icon(Icons.image),
-                    label: Text('Add Image'),
-                  ),
-                if (imageSelected)
-                  CircleAvatar(
-                    backgroundImage:
-                        _pickedImage != null ? FileImage(_pickedImage) : null,
-                    radius: 10,
-                  ),
-                if (imageSelected)
-                  IconButton(
-                    icon: Icon(Icons.clear),
-                    onPressed: () {
-                      imageSelected = !imageSelected;
-                      setState(() {
-                        _pickedImage = null;
-                      });
-                    },
-                  ),
-              ],
-            ),
-            SizedBox(height: 12),
-            ElevatedButton(
-              child: Text('Create Post'),
-              onPressed: _trySubmit,
-            ),
-          ],
+                  if (imageSelected)
+                    CircleAvatar(
+                      backgroundImage:
+                          _pickedImage != null ? FileImage(_pickedImage) : null,
+                      radius: 10,
+                    ),
+                  if (imageSelected)
+                    IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: () {
+                        imageSelected = !imageSelected;
+                        setState(() {
+                          _pickedImage = null;
+                        });
+                      },
+                    ),
+                ],
+              ),
+              SizedBox(height: 12),
+              ElevatedButton(
+                child: Text('Create Post'),
+                onPressed: _trySubmit,
+              ),
+            ],
+          ),
         ),
       ),
     );
