@@ -10,15 +10,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  // String _userPostTitle = '';
-  // String _userPostDescription = '';
-  // File _userImagePicker;
-
-  // _createPost(File image, String title, String desc) {
-  //   _userImagePicker = image;
-  //   _userPostTitle = title;
-  //   _userPostDescription = desc;
-  // }
 
   userLogOut() {
     FirebaseAuth.instance.signOut();

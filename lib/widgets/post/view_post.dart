@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:favorite_button/favorite_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -11,15 +12,46 @@ class ViewPost extends StatefulWidget {
 class _ViewPostState extends State<ViewPost> {
   final String uid = FirebaseAuth.instance.currentUser.uid.toString();
   int likeCount = 0;
-  bool buttonPressed = false;
 
-  void buttonLiked() {
-    buttonPressed = !buttonPressed;
-    if (likeCount == 0 && buttonPressed) {
-      likeCount = 1;
-    } else {
-      likeCount = 0;
-    }
+  bool postLiked = false;
+
+  Future<void> addLikeCount(String id) async {
+    CollectionReference getUser = FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .collection('likedUserList');
+    getUser.add({'userID': uid});
+
+    Stream<QuerySnapshot> snapshot = FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .collection('likedUserList')
+        .snapshots();
+    likeCount = await snapshot.length;
+  }
+
+  void removeLikeCount(String id) {
+    CollectionReference getUser = FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .collection('likedUserList');
+  }
+
+  bool checkLikedPost(id) {
+    Stream<QuerySnapshot> snapshot = FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .collection('likedUserList')
+        .snapshots();
+
+    snapshot.forEach((element) {
+      element.docs.forEach((e) {
+        if (e.data().containsValue(uid) && !postLiked) {
+          postLiked = true;
+        }
+      });
+    });
+    return postLiked;
   }
 
   @override
@@ -33,6 +65,7 @@ class _ViewPostState extends State<ViewPost> {
           );
         }
         final documents = streamSnapShot.data.documents;
+        // final id = streamSnapShot.data.docs;
         return ListView.builder(
             shrinkWrap: true,
             itemCount: documents.length,
@@ -45,13 +78,6 @@ class _ViewPostState extends State<ViewPost> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (uid == documents[position]['uid'])
-                            Container(
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: Icon(Icons.delete),
-                              ),
-                            ),
                           SizedBox(
                             height: 10,
                           ),
@@ -95,46 +121,66 @@ class _ViewPostState extends State<ViewPost> {
                               Text(' posted:')
                             ],
                           ),
-                          SizedBox(
-                            height: 20,
+                          const Divider(
+                            thickness: 1,
                           ),
-                          Text(documents[position]['title']),
+                          Text(
+                            documents[position]['title'],
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           Text(documents[position]['description']),
-                          SizedBox(
-                            height: 20,
-                          ),
+                          if (documents[position]['image'] != null)
+                            const Divider(
+                              thickness: 1,
+                            ),
                           if (documents[position]['image'] != null)
                             Image.network(documents[position]['image']),
-                          SizedBox(
-                            height: 20,
-                          ),
                           Row(children: [
-                            Text(documents[position]['totalLikes'].toString()),
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                primary: Colors.deepPurpleAccent,
-                              ),
-                              child: Icon(Icons.thumb_up_off_alt),
-                              onPressed: () {
-                                // setState(() {
-                                buttonLiked();
-                                // }
-                                // );
-                              },
-                            ),
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                  primary: Colors.redAccent,
-                                  alignment: Alignment.center),
-                              child: Icon(Icons.delete),
-                              onPressed: () {
-                                setState(() {});
-                              },
-                            ),
+                            Text(likeCount.toString()),
+                            if (checkLikedPost(documents[position].id))
+                              TextButton(
+                                  style: TextButton.styleFrom(
+                                    primary: Colors.red,
+                                  ),
+                                  onPressed: () async {
+                                    removeLikeCount(documents[position].id);
+                                  },
+                                  child: Icon(
+                                    Icons.favorite,
+                                  )),
+                            if (!checkLikedPost(documents[position].id))
+                              TextButton(
+                                  style: TextButton.styleFrom(
+                                    primary: Colors.deepPurpleAccent,
+                                  ),
+                                  onPressed: () {
+                                    addLikeCount(documents[position].id);
+                                  },
+                                  child: Icon(
+                                    Icons.favorite_border,
+                                  ))
                           ]),
-                          SizedBox(
-                            height: 20,
-                          ),
+                          if (uid == documents[position]['uid'])
+                            Container(
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      primary: Colors.redAccent,
+                                      alignment: Alignment.center),
+                                  child: Icon(Icons.delete),
+                                  onPressed: () {
+                                    setState(() {
+                                      FirebaseFirestore.instance.runTransaction(
+                                          (Transaction myTransaction) async {
+                                        myTransaction.delete(
+                                            documents[position].reference);
+                                      });
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),

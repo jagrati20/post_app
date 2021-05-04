@@ -7,14 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class CreatePost extends StatefulWidget {
-  // CreatePost(this.createPostfn);
-
-  // final void Function(
-  //   File pickedImage,
-  //   String postTitle,
-  //   String postDescription,
-  // ) createPostfn;
-
   @override
   _CreatePostState createState() => _CreatePostState();
 }
@@ -32,8 +24,8 @@ class _CreatePostState extends State<CreatePost> {
 
   Future<void> _trySubmit() async {
     final isValid = _formKey.currentState.validate();
-    //close the keyboard
-    FocusScope.of(context).unfocus();
+    // //close the keyboard
+    // FocusScope.of(context).unfocus();
     final ref =
         FirebaseStorage.instance.ref().child('user_image').child(uuid + '.jpg');
     var url;
@@ -61,8 +53,7 @@ class _CreatePostState extends State<CreatePost> {
           ),
         );
       } catch (err) {
-        final scaffold = Scaffold.of(context);
-        scaffold.showSnackBar(
+        Scaffold.of(context).showSnackBar(
           SnackBar(
             content: Text(err),
           ),
@@ -81,11 +72,6 @@ class _CreatePostState extends State<CreatePost> {
       _pickedImage = pickedImageFile;
       _trySubmit();
     });
-    // widget.createPostfn(
-    //   _pickedImage,
-    //   _postTitle,
-    //   _postDescription,
-    // );
   }
 
   @override
@@ -96,8 +82,15 @@ class _CreatePostState extends State<CreatePost> {
       child: Form(
         key: _formKey,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
+            Text(
+              'Create a new Post!',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const Divider(
+              thickness: 1,
+            ),
             TextFormField(
               key: ValueKey('title'),
               validator: (value) {
